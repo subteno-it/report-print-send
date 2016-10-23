@@ -9,9 +9,6 @@
 
 import logging
 
-import os
-from tempfile import mkstemp
-
 from openerp import models, fields, api
 
 
@@ -111,14 +108,39 @@ class PrintingPrinter(models.Model):
 
         """
         self.ensure_one()
-        fd, file_name = mkstemp()
-        try:
-            os.write(fd, content)
-        finally:
-            os.close(fd)
 
-        return self.print_file(
-            file_name, report=report, copies=copies, format=format)
+        connection = self.server_id._open_connection(raise_on_error=True)
+        options = self.print_options(
+            report=report, format=format, copies=copies)
+
+        _logger.debug(
+            'Sending job to CUPS printer %s on %s'
+            % (self.system_name, self.server_id.address))
+        # Create a new CUPS job to stream data into
+        jobid = connection.createJob(self.system_name, str(report), options)
+
+        # Define the mime type to use (done the same way as the lp command)
+        mime_type = 'application/octet-stream'
+        if format == 'raw':
+            mime_type = 'application/vnd.cups-raw'
+        # Start a single document in the current CUPS job
+        connection.startDocument(
+            self.system_name, jobid, str(report), mime_type, 1)
+
+        # Write data to cups by chunks
+        buffer_size = 4096
+        for start in range(0, len(content), buffer_size):
+            buf = content[start:start + buffer_size]
+            connection.writeRequestData(buf, len(buf))
+
+        # Close the document to start printing
+        connection.finishDocument(self.system_name)
+        _logger.info("Printing job: '%s' on %s" % (
+            str(report),
+            self.server_id.address,
+        ))
+
+        return True
 
     @api.multi
     def print_file(self, file_name, report=None, copies=1, format=None):

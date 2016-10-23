@@ -1,4 +1,6 @@
-pycups==1.9.66
+# This version of pycups fixes a bug with the binary data when using the streaming API
+# The link to the zip file is temporary, waiting for the next version to be released on Pypi
+https://github.com/zdohnal/pycups/archive/3625dfc06a85aba999dc548ba45f74767397be46.zip
 PyPDF2==1.18
 requests
 zpl2

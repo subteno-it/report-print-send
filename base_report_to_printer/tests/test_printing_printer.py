@@ -2,7 +2,6 @@
 # Copyright 2016 LasLabs Inc.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import tempfile
 import mock
 
 from openerp.exceptions import UserError
@@ -116,28 +115,50 @@ class TestPrintingPrinter(TransactionCase):
     @mock.patch('%s.cups' % server_model)
     def test_print_report(self, cups):
         """ It should print a report through CUPS """
-        fd, file_name = tempfile.mkstemp()
-        with mock.patch('%s.mkstemp' % model) as mkstemp:
-            mkstemp.return_value = fd, file_name
-            printer = self.new_record()
-            printer.print_document('report_name', 'content to print', 'pdf')
-            cups.Connection().printFile.assert_called_once_with(
-                printer.system_name,
-                file_name,
-                file_name,
-                options={})
+        cups.Connection().createJob.return_value = 1
+        printer = self.new_record()
+        report_name = 'report_name'
+        content = 'content to print'
+        printer.print_document(report_name, content, 'pdf')
+
+        cups.Connection().createJob.assert_called_once_with(
+            printer.system_name, report_name, {})
+        cups.Connection().startDocument.assert_called_once_with(
+            printer.system_name, 1, report_name, 'application/octet-stream', 1)
+        cups.Connection().writeRequestData.assert_called_once_with(
+            content, len(content))
+        cups.Connection().finishDocument.assert_called_once_with(
+            printer.system_name)
+
+    @mock.patch('%s.cups' % server_model)
+    def test_print_raw_data(self, cups):
+        """ It should print a report through CUPS """
+        cups.Connection().createJob.return_value = 1
+        printer = self.new_record()
+        report_name = 'report_name'
+        chunk_size = 4096
+        content = str(range(1024))
+        printer.print_document(report_name, content, 'raw')
+
+        cups.Connection().createJob.assert_called_once_with(
+            printer.system_name, report_name, {'raw': 'True'})
+        cups.Connection().startDocument.assert_called_once_with(
+            printer.system_name, 1, report_name, 'application/vnd.cups-raw', 1)
+        cups.Connection().writeRequestData.assert_any_call(
+            content[:chunk_size], chunk_size)
+        cups.Connection().writeRequestData.assert_any_call(
+            content[chunk_size:], len(content) - chunk_size)
+        cups.Connection().finishDocument.assert_called_once_with(
+            printer.system_name)
 
     @mock.patch('%s.cups' % server_model)
     def test_print_report_error(self, cups):
         """ It should print a report through CUPS """
         cups.Connection.side_effect = Exception
-        fd, file_name = tempfile.mkstemp()
-        with mock.patch('%s.mkstemp' % model) as mkstemp:
-            mkstemp.return_value = fd, file_name
-            printer = self.new_record()
-            with self.assertRaises(UserError):
-                printer.print_document(
-                    'report_name', 'content to print', 'pdf')
+        printer = self.new_record()
+        with self.assertRaises(UserError):
+            printer.print_document(
+                'report_name', 'content to print', 'pdf')
 
     @mock.patch('%s.cups' % server_model)
     def test_print_file(self, cups):
