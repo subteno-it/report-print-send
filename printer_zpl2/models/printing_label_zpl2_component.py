@@ -43,6 +43,7 @@ class PrintingLabelZpl2Component(models.Model):
             (zpl2.BARCODE_UPC_E, 'UPC-E'),
             (zpl2.BARCODE_CODE_128, 'Code 128'),
             (zpl2.BARCODE_EAN_13, 'EAN-13'),
+            (zpl2.BARCODE_QRCODE, 'QR Code'),
             ('sublabel', 'Sublabel'),
         ], string='Type', required=True, default='text', oldname='type',
         help='Type of content, simple text or barcode.')
@@ -142,3 +143,32 @@ class PrintingLabelZpl2Component(models.Model):
     block_left_margin = fields.Integer(
         string='Left Margin',
         help='Left margin for the second and other lines in the block.')
+    qrmodel = fields.Selection(
+        selection=[
+            (zpl2.QRMODEL_ORIGINAL, 'Original'),
+            (zpl2.QRMODEL_ENHANCED, 'Enhanced'),
+        ], required=True, default=zpl2.QRMODEL_ENHANCED,
+        help='Model')
+    qrmagnification = fields.Selection(
+        selection=[
+            (zpl2.QRMAGNIFICATION_150DPI, '150 Dpi'),
+            (zpl2.QRMAGNIFICATION_200DPI, '200 Dpi'),
+            (zpl2.QRMAGNIFICATION_300DPI, '300 Dpi'),
+            (zpl2.QRMAGNIFICATION_400DPI, '400 Dpi'),
+            (zpl2.QRMAGNIFICATION_500DPI, '500 Dpi'),
+            (zpl2.QRMAGNIFICATION_600DPI, '600 Dpi'),
+        ], required=True, default=zpl2.QRMAGNIFICATION_300DPI,
+        help='Magnification Factor')
+    qrerrorcorrection = fields.Selection(
+        selection=[
+            (zpl2.QRERRORCORRECTION_ULTRA_HIGH, 'Ultra-high reliability level'),
+            (zpl2.QRERRORCORRECTION_HIGH, 'High reliability level'),
+            (zpl2.QRERRORCORRECTION_STANDARD, 'Standard level'),
+            (zpl2.QRERRORCORRECTION_HIGH_DENSITY, 'High density level'),
+        ], required=True, default=zpl2.QRERRORCORRECTION_HIGH,
+        help='Error Correction')
+    qrmask = fields.Integer(
+        string='Mask Value',
+        default=7,
+        help='Mask Value 0-7'
+    )
