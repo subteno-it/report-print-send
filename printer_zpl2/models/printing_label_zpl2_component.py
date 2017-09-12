@@ -157,6 +157,10 @@ class PrintingLabelZpl2Component(models.Model):
             (zpl2.QRMAGNIFICATION_400DPI, '400 Dpi'),
             (zpl2.QRMAGNIFICATION_500DPI, '500 Dpi'),
             (zpl2.QRMAGNIFICATION_600DPI, '600 Dpi'),
+            (zpl2.QRMAGNIFICATION_700DPI, '700 Dpi'),
+            (zpl2.QRMAGNIFICATION_800DPI, '800 Dpi'),
+            (zpl2.QRMAGNIFICATION_900DPI, '900 Dpi'),
+            (zpl2.QRMAGNIFICATION_1000DPI, '1000 Dpi'),
         ], required=True, default=zpl2.QRMAGNIFICATION_300DPI,
         help='Magnification Factor')
     qrerrorcorrection = fields.Selection(
