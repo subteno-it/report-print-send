@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2016 SYLEAM (<http://www.syleam.fr>)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-
+import base64
 import time
 import datetime
+import io
 import logging
+from PIL import Image
 from odoo import api, exceptions, fields, models
 from odoo.tools.translate import _
 from odoo.tools.safe_eval import safe_eval
@@ -113,6 +115,16 @@ class PrintingLabelZpl2(models.Model):
                         zpl2.ARG_COLOR: component.color,
                         zpl2.ARG_ROUNDING: component.rounding,
                     })
+            elif component.component_type == 'graphic':
+                pil_image = Image.open(
+                    io.BytesIO(
+                        base64.decodestring(
+                            component.graphic_image or data
+                        )))
+                label_data.graphic_image(
+                    component_offset_x, component_offset_y,
+                    pil_image
+                )
             elif component.component_type == 'circle':
                 label_data.graphic_circle(
                     component_offset_x, component_offset_y, {
