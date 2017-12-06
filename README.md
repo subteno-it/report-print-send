@@ -19,7 +19,9 @@ Available addons
 ----------------
 addon | version | summary
 --- | --- | ---
-[base_report_to_printer](base_report_to_printer/) | 10.0.1.0.0 | Report to printer
+[base_report_to_printer](base_report_to_printer/) | 10.0.1.0.1 | Report to printer
+[printer_tray](printer_tray/) | 10.0.1.0.0 | Report to printer - Paper tray selection
+[printer_zpl2](printer_zpl2/) | 10.0.1.0.0 | Printer ZPL II
 
 
 Unported addons
@@ -28,6 +30,5 @@ addon | version | summary
 --- | --- | ---
 [pingen](pingen/) | 1.0 (unported) | pingen.com integration
 [pingen_document](pingen_document/) | 1.0 (unported) | pingen.com integration (document)
-[printer_tray](printer_tray/) | 8.0.1.0.0 (unported) | Report to printer - Paper tray selection
 
 [//]: # (end addons)
