@@ -81,8 +81,8 @@
                                     <field name="truncate"/>
                                 </group>
                             </page>
-                            <!-- QRCode arguments -->
-                            <page string="QRCode Arguments" attrs="{'invisible': [('component_type', '!=', 'qrcode')]}">
+                            <!-- 2D Barcode arguments -->
+                            <page string="2D Barcode Arguments" attrs="{'invisible': [('component_type', '!=', 'qrcode')]}">
                                 <group>
                                     <field name="qrmodel"/>
                                     <field name="qrmagnification"/>

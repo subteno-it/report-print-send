@@ -84,7 +84,6 @@ class PrintingLabelZpl2(models.Model):
         for (component, data, offset_x, offset_y) in to_print:
             component_offset_x = component.origin_x + offset_x
             component_offset_y = component.origin_y + offset_y
-
             if component.component_type == 'text':
                 barcode_arguments = dict([
                     (field_name, component[field_name])
@@ -128,40 +127,37 @@ class PrintingLabelZpl2(models.Model):
                     label_data, data,
                     label_offset_x=component_offset_x,
                     label_offset_y=component_offset_y)
-            elif component.component_type == zpl2.BARCODE_QRCODE:
-                # Adding Control Arguments to QRCode data Label
-                data = 'MM,A{}'.format(data)
-                barcode_arguments = dict([
-                    (field_name, component[field_name])
-                    for field_name in [
-                        zpl2.ARG_ORIENTATION,
-                        zpl2.ARG_QRMODEL,
-                        zpl2.ARG_QRMAGNIFICATION,
-                        zpl2.ARG_QRERRORCORRECTION,
-                        zpl2.ARG_QRMASK,
-                    ]
-                ])
-                label_data.barcode_data(
-                    component.origin_x + offset_x,
-                    component.origin_y + offset_y,
-                    component.component_type, barcode_arguments, data)
             else:
-                barcode_arguments = dict([
-                    (field_name, component[field_name])
-                    for field_name in [
-                        zpl2.ARG_ORIENTATION,
-                        zpl2.ARG_CHECK_DIGITS,
-                        zpl2.ARG_HEIGHT,
-                        zpl2.ARG_INTERPRETATION_LINE,
-                        zpl2.ARG_INTERPRETATION_LINE_ABOVE,
-                        zpl2.ARG_SECURITY_LEVEL,
-                        zpl2.ARG_COLUMNS_COUNT,
-                        zpl2.ARG_ROWS_COUNT,
-                        zpl2.ARG_TRUNCATE,
-                        zpl2.ARG_MODULE_WIDTH,
-                        zpl2.ARG_BAR_WIDTH_RATIO,
-                    ]
-                ])
+                if component.component_type == zpl2.BARCODE_QRCODE:
+                    # Adding Control Arguments to QRCode data Label
+                    data = 'MM,A{}'.format(data)
+                    barcode_arguments = dict([
+                        (field_name, component[field_name])
+                        for field_name in [
+                            zpl2.ARG_ORIENTATION,
+                            zpl2.ARG_QRMODEL,
+                            zpl2.ARG_QRMAGNIFICATION,
+                            zpl2.ARG_QRERRORCORRECTION,
+                            zpl2.ARG_QRMASK,
+                        ]
+                    ])
+                else:
+                    barcode_arguments = dict([
+                        (field_name, component[field_name])
+                        for field_name in [
+                            zpl2.ARG_ORIENTATION,
+                            zpl2.ARG_CHECK_DIGITS,
+                            zpl2.ARG_HEIGHT,
+                            zpl2.ARG_INTERPRETATION_LINE,
+                            zpl2.ARG_INTERPRETATION_LINE_ABOVE,
+                            zpl2.ARG_SECURITY_LEVEL,
+                            zpl2.ARG_COLUMNS_COUNT,
+                            zpl2.ARG_ROWS_COUNT,
+                            zpl2.ARG_TRUNCATE,
+                            zpl2.ARG_MODULE_WIDTH,
+                            zpl2.ARG_BAR_WIDTH_RATIO,
+                        ]
+                    ])
                 label_data.barcode_data(
                     component.origin_x + offset_x,
                     component.origin_y + offset_y,

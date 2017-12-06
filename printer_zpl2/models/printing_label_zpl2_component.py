@@ -143,13 +143,13 @@ class PrintingLabelZpl2Component(models.Model):
     block_left_margin = fields.Integer(
         string='Left Margin',
         help='Left margin for the second and other lines in the block.')
-    qrmodel = fields.Selection(
+    model = fields.Selection(
         selection=[
             (zpl2.QRMODEL_ORIGINAL, 'Original'),
             (zpl2.QRMODEL_ENHANCED, 'Enhanced'),
         ], required=True, default=zpl2.QRMODEL_ENHANCED,
         help='Model')
-    qrmagnification = fields.Selection(
+    magnification_factor = fields.Selection(
         selection=[
             (zpl2.QRMAGNIFICATION_150DPI, '150 Dpi'),
             (zpl2.QRMAGNIFICATION_200DPI, '200 Dpi'),
@@ -163,7 +163,7 @@ class PrintingLabelZpl2Component(models.Model):
             (zpl2.QRMAGNIFICATION_1000DPI, '1000 Dpi'),
         ], required=True, default=zpl2.QRMAGNIFICATION_300DPI,
         help='Magnification Factor')
-    qrerrorcorrection = fields.Selection(
+    error_correction = fields.Selection(
         selection=[
             (zpl2.QRERRORCORRECTION_ULTRA_HIGH, 'Ultra-high reliability level'),
             (zpl2.QRERRORCORRECTION_HIGH, 'High reliability level'),
@@ -171,7 +171,7 @@ class PrintingLabelZpl2Component(models.Model):
             (zpl2.QRERRORCORRECTION_HIGH_DENSITY, 'High density level'),
         ], required=True, default=zpl2.QRERRORCORRECTION_HIGH,
         help='Error Correction')
-    qrmask = fields.Integer(
+    mask_value = fields.Integer(
         string='Mask Value',
         default=7,
         help='Mask Value 0-7'
