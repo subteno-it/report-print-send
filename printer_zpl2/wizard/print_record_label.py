@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, api, fields
+from odoo.exceptions import ValidationError
 
 
 class PrintRecordLabel(models.TransientModel):
@@ -16,6 +17,13 @@ class PrintRecordLabel(models.TransientModel):
         domain=lambda self: [
             ('model_id.model', '=', self.env.context.get('active_model'))],
         help='Label to print.')
+    print_qty = fields.Integer(string="Print qty.", required=True, default=1)
+
+    @api.constrains('print_qty')
+    def _check_print_qty(self):
+        for record in self:
+            if record.print_qty < 1:
+                raise ValidationError("The print quantity must be > 0.")
 
     @api.model
     def default_get(self, fields_list):
@@ -41,5 +49,6 @@ class PrintRecordLabel(models.TransientModel):
         """ Prints a label per selected record """
         record_model = self.env.context['active_model']
         for record_id in self.env.context['active_ids']:
-            record = self.env[record_model].browse(record_id)
-            self.label_id.print_label(self.printer_id, record)
+            for _ in range(self.print_qty):
+                record = self.env[record_model].browse(record_id)
+                self.label_id.print_label(self.printer_id, record)

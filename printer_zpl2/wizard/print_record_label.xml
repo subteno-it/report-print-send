@@ -12,6 +12,7 @@
                 <group>
                     <field name="printer_id"/>
                     <field name="label_id"/>
+                    <field name="print_qty"/>
                 </group>
                 <footer>
                     <button type="special" special="cancel" string="Cancel"/>
